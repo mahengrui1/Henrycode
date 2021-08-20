@@ -1,0 +1,55 @@
+《王国英雄志》：提取4399存档概述
+20210820
+游戏用名：雷风立方
+
+预计用时：计算机业余爱好者第一次做需1.5小时
+
+1 基础判断
+
+4399的http://www.4399.com/flash/219039_3.htm 与本地正统的（C盘根目录\save  *.rpgsave）同出一源，考虑到4399夏姬霸抄起家，它只要不是特别苟，最多做一次转换，而且不设密码。4399名声不错，故直接截取文件，做某种转换，替换本地正统存档即可
+
+html5游戏用loacal storage文件夹做记录，此处判断失误，清除local storage只消灭游戏本体不消灭存档。故应想到存档以表单形式储存。曾几何时，怀疑Javascript内置固定调用恼羞成怒
+
+2 所用工具
+
+win10 firefox 本地正统 4399 firefox-addon:SQLite-Manager notepad++ Jupyter-Notebook(python) win10-addon:process monitor（你不需要） （Github，写攻略用你不需要）
+
+3 锁定文件
+
+结论：firefox浏览器（win10）的保存路径为C:\Users\用户名\AppData\Roaming\Mozilla\Firefox\Profiles\一堆.default-release\webappsstore.sqlite 该文件有存档信息（也有用户的大量信息）
+
+过程：想不到表单恼羞成怒，从微软官网下载系统控件process monitor，学会开关，1分钟有一千万次记录，务必学会清除。学会exclude筛选，include筛选似乎是反向exclude不学也罢
+
+我在firefox上玩4399，在edge上没有存档，所以打开游戏，选在“保存”功能上，用process monitor记录那3秒中硬盘的所有读写。正常保存即可，花费3秒，硬盘有数千次写入操作（operator:writefile），再进行清除，例如：这个写着cache,肯定exclude掉，那个在system32里，绝对exclude掉。排除电脑常识后剩数十个位置，走访后锁定webappsstore.sqlite
+
+查看网上评价后不难想到，如果别人是用IE玩的用360玩的用chrome玩的，会存在类似的文件中
+
+4 转换形式
+
+4.1 本地正统
+
+.rpgsave格式用的是UTF-8|CR-LF|INS的文本格式我也不完全清楚规定但立刻看出这就是win10记事本的默认格式所以用记事本复制粘贴即可恢复，这里用notepad++。随后实测末尾1个字符的误差可行，所以复制粘贴很粗心，最后那里多1回车少1字符也没事
+
+4.2 4399
+
+.sqlite是简易的数据库文件，只要称呼其中的名字name of table就可调出全部信息，其实网上有免费转换但我经常网上冲浪这文件有50MB大它们要钱。避免下载官方大程序，firefox扩展SQLite Manager 可以浏览它，在浏览器扩展区点击图标再把文件拖入即可
+
+4.3 python编程：慢慢探索
+
+其实我再花3小时估计能做出“存档一键转换.ipynb”，慢慢探索是为了开荒，你已经不需要了，但，我何必呢，这.ipynb对于电脑小白想来他也得花3小时搞明白，是用Jupyter-Notebook(python, Anaconda)。我何必花3小时。至于“存档一键转换.exe”？那就难了！需要10小时。考虑到用爱发电+努力学习，100人民币保底吧请我啊，我的联系方式在程序边上
+
+4.4 找出行数
+
+无论你用什么方法，找到标签RPG空格什么，例如4399管'file1.rpgsave'叫'RPG file1'管'global.rpgsave'叫'RPG global'。它旁边的一大堆数据就是你的纸片人
+
+4.5 数清文件
+
+共22个文件，global.rpgsave没了就全部作废，file1.rpgsave没了存档1作废，config.rpgsave没了没事
+
+4.6 复制粘贴
+
+把RPG file1复制粘贴到记事本里存为file1.rpgsave，以此类推
+
+4.7 巧用python
+
+我目前的程序有2个功能，1 找出行数（如果你在4399玩了很多RPG你仔细找找吧），并打印出纸片人 2 一键创建20个文件，免去“存为file1.rpgsave”这步，你只要复制粘贴就行。你需要掌握python才能看懂，因为我没有优化。它在https://github.com/mahengrui1/Henrycode
